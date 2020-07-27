@@ -57,10 +57,12 @@ namespace DiagnosticSourceUsage
         private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
+
             if (!invocationExpression.IsDiagnosticSourceMethodInvocation("Write", context.SemanticModel,
                 out var writeArgument)) return;
 
-            if (IsGuarded(context, writeArgument, out var isEnabledCalled, out var mismatchIsEnabledSymbol, out var mismatchWriteSymbol)) return;
+            if (IsGuarded(context, writeArgument, out var isEnabledCalled, out var mismatchIsEnabledSymbol, out var mismatchWriteSymbol))
+                return;
 
             context.ReportDiagnostic(isEnabledCalled
                 ? Diagnostic.Create(MismatchGuardRule, invocationExpression.GetLocation(), DiagnosticSeverity.Warning,
